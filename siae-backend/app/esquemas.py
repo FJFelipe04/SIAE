@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, datetime
 from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, EmailStr, Field
@@ -31,6 +31,48 @@ class UsuarioSalida(BaseModel):
     nombre: str
     correo: str
     perfil: str
+
+
+class UsuarioAdminSalida(UsuarioSalida):
+    activo: bool
+    creado_en: datetime
+    ultimo_acceso: Optional[datetime] = None
+    archivos: int
+    tablas: int
+
+
+class UsuarioAdminCambio(BaseModel):
+    perfil: Optional[Literal["analista", "jefe_comercial", "administrador"]] = None
+    activo: Optional[bool] = None
+
+
+class TablaGlobalSalida(BaseModel):
+    id: int
+    nombre: str
+    filas: int
+    columnas: int
+    creada_en: datetime
+    usuario_id: int
+    propietario: str
+    correo_propietario: str
+
+
+class EventoAuditoriaSalida(BaseModel):
+    id: int
+    fecha: datetime
+    accion: str
+    correo: Optional[str] = None
+    detalle: Optional[str] = None
+    ip: Optional[str] = None
+
+
+class ResumenAdminSalida(BaseModel):
+    usuarios: int
+    usuarios_activos: int
+    administradores: int
+    archivos: int
+    tablas: int
+    registros: int
 
 
 class VistaPrevia(BaseModel):

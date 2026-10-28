@@ -6,14 +6,14 @@ CREATE TABLE empresa (
     creado_en TIMESTAMP NOT NULL DEFAULT now()
 );
 
--- Analista o jefe comercial que usa SIAE.
+-- Analista, jefe comercial o administrador (control global) que usa SIAE.
 CREATE TABLE usuario (
     id SERIAL PRIMARY KEY,
     empresa_id INTEGER NOT NULL,
     nombre VARCHAR(100) NOT NULL,
     correo VARCHAR(150) NOT NULL UNIQUE,
     contrasena_hash VARCHAR(255) NOT NULL,
-    perfil VARCHAR(20) NOT NULL DEFAULT 'analista' CHECK (perfil IN ('analista','jefe_comercial')),
+    perfil VARCHAR(20) NOT NULL DEFAULT 'analista' CHECK (perfil IN ('analista','jefe_comercial','administrador')),
     activo BOOLEAN NOT NULL DEFAULT true,
     creado_en TIMESTAMP NOT NULL DEFAULT now(),
     ultimo_acceso TIMESTAMP,

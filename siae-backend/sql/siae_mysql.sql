@@ -16,7 +16,7 @@ CREATE TABLE usuario (
     nombre VARCHAR(100) NOT NULL COMMENT 'Nombre completo',
     correo VARCHAR(150) NOT NULL UNIQUE COMMENT 'Correo de inicio de sesión',
     contrasena_hash VARCHAR(255) NOT NULL COMMENT 'Contraseña protegida con bcrypt (nunca en texto plano)',
-    perfil VARCHAR(20) NOT NULL DEFAULT 'analista' CHECK (perfil IN ('analista','jefe_comercial')) COMMENT 'Perfil del usuario',
+    perfil VARCHAR(20) NOT NULL DEFAULT 'analista' CHECK (perfil IN ('analista','jefe_comercial','administrador')) COMMENT 'Perfil del usuario',
     activo BOOLEAN NOT NULL DEFAULT true COMMENT 'Si la cuenta está habilitada',
     creado_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de registro',
     ultimo_acceso DATETIME NULL COMMENT 'Último inicio de sesión',

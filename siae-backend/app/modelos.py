@@ -44,7 +44,7 @@ class Empresa(Base):
 
 class Usuario(Base):
     __tablename__ = "usuario"
-    __table_args__ = (CheckConstraint("perfil IN ('analista','jefe_comercial')"),)
+    __table_args__ = (CheckConstraint("perfil IN ('analista','jefe_comercial','administrador')"),)
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     empresa_id: Mapped[int] = mapped_column(ForeignKey("empresa.id"))
     nombre: Mapped[str] = mapped_column(String(100))

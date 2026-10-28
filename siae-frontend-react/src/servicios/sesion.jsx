@@ -7,19 +7,24 @@ const ContextoSesion = createContext(null);
 export function SesionProvider({ children }) {
   const [token, setToken] = useState(() => sessionStorage.getItem("siae_token"));
   const [correo, setCorreo] = useState(() => sessionStorage.getItem("siae_correo"));
+  const [perfil, setPerfil] = useState(() => sessionStorage.getItem("siae_perfil"));
 
   async function iniciarSesion(correoIngresado, clave) {
     const datos = await llamarApi("/auth/login", { metodo: "POST", cuerpo: { correo: correoIngresado, clave } });
     sessionStorage.setItem("siae_token", datos.access_token);
     sessionStorage.setItem("siae_correo", correoIngresado);
+    const yo = await llamarApi("/auth/yo", { token: datos.access_token });
+    sessionStorage.setItem("siae_perfil", yo.perfil);
     setToken(datos.access_token);
     setCorreo(correoIngresado);
+    setPerfil(yo.perfil);
   }
 
   function cerrarSesion() {
     sessionStorage.clear();
     setToken(null);
     setCorreo(null);
+    setPerfil(null);
   }
 
   /** Llama a la API con el token; si la sesión expiró, la cierra. */
@@ -32,7 +37,7 @@ export function SesionProvider({ children }) {
     }
   }
 
-  return <ContextoSesion.Provider value={{ token, correo, iniciarSesion, cerrarSesion, api }}>{children}</ContextoSesion.Provider>;
+  return <ContextoSesion.Provider value={{ token, correo, perfil, esAdmin: perfil === "administrador", iniciarSesion, cerrarSesion, api }}>{children}</ContextoSesion.Provider>;
 }
 
 export const useSesion = () => useContext(ContextoSesion);

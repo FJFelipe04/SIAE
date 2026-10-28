@@ -1,1214 +1,1649 @@
 {
-    "openapi": "3.1.0",
-    "info": {
-        "title": "SIAE API",
-        "description": "Sistema de Inteligencia Anal\u00edtica Empresarial: carga, transformaci\u00f3n y an\u00e1lisis de datos de ventas.",
-        "version": "1.0.0"
-    },
-    "paths": {
-        "/auth/registro": {
-            "post": {
-                "tags": [
-                    "Autenticaci\u00f3n"
-                ],
-                "summary": "Registrar un usuario",
-                "operationId": "registrar_auth_registro_post",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/RegistroEntrada"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "201": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UsuarioSalida"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SIAE API",
+    "description": "Sistema de Inteligencia Analítica Empresarial: carga, transformación y análisis de datos de ventas.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/auth/registro": {
+      "post": {
+        "tags": [
+          "Autenticación"
+        ],
+        "summary": "Registrar un usuario",
+        "operationId": "registrar_auth_registro_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistroEntrada"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsuarioSalida"
                 }
+              }
             }
-        },
-        "/auth/login": {
-            "post": {
-                "tags": [
-                    "Autenticaci\u00f3n"
-                ],
-                "summary": "Iniciar sesi\u00f3n y obtener un token",
-                "operationId": "login_auth_login_post",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/LoginEntrada"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/TokenSalida"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
+              }
             }
-        },
-        "/auth/yo": {
-            "get": {
-                "tags": [
-                    "Autenticaci\u00f3n"
-                ],
-                "summary": "Datos del usuario autenticado",
-                "operationId": "yo_auth_yo_get",
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UsuarioSalida"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "HTTPBearer": []
-                    }
-                ]
-            }
-        },
-        "/archivos": {
-            "get": {
-                "tags": [
-                    "Archivos"
-                ],
-                "summary": "Listar mis archivos",
-                "operationId": "listar_archivos_get",
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "HTTPBearer": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "Archivos"
-                ],
-                "summary": "Cargar un archivo .xlsx o .csv",
-                "operationId": "cargar_archivos_post",
-                "requestBody": {
-                    "content": {
-                        "multipart/form-data": {
-                            "schema": {
-                                "$ref": "#/components/schemas/Body_cargar_archivos_post"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "201": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ArchivoSalida"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "HTTPBearer": []
-                    }
-                ]
-            }
-        },
-        "/archivos/{archivo_id}": {
-            "get": {
-                "tags": [
-                    "Archivos"
-                ],
-                "summary": "Ver un archivo y su vista previa original",
-                "operationId": "ver_archivos__archivo_id__get",
-                "security": [
-                    {
-                        "HTTPBearer": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "archivo_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "title": "Archivo Id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ArchivoSalida"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/sesiones": {
-            "post": {
-                "tags": [
-                    "Transformaci\u00f3n"
-                ],
-                "summary": "Iniciar una sesi\u00f3n de transformaci\u00f3n",
-                "operationId": "crear_sesiones_post",
-                "security": [
-                    {
-                        "HTTPBearer": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "archivo_id",
-                        "in": "query",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "title": "Archivo Id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/SesionSalida"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/sesiones/{sesion_id}": {
-            "get": {
-                "tags": [
-                    "Transformaci\u00f3n"
-                ],
-                "summary": "Ver la sesi\u00f3n con la vista previa actual",
-                "operationId": "ver_sesiones__sesion_id__get",
-                "security": [
-                    {
-                        "HTTPBearer": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "sesion_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "title": "Sesion Id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/SesionSalida"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/sesiones/{sesion_id}/pasos": {
-            "post": {
-                "tags": [
-                    "Transformaci\u00f3n"
-                ],
-                "summary": "Aplicar una transformaci\u00f3n",
-                "operationId": "aplicar_sesiones__sesion_id__pasos_post",
-                "security": [
-                    {
-                        "HTTPBearer": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "sesion_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "title": "Sesion Id"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/PasoEntrada"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/SesionSalida"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/sesiones/{sesion_id}/pasos/ultimo": {
-            "delete": {
-                "tags": [
-                    "Transformaci\u00f3n"
-                ],
-                "summary": "Deshacer el \u00faltimo paso",
-                "operationId": "deshacer_sesiones__sesion_id__pasos_ultimo_delete",
-                "security": [
-                    {
-                        "HTTPBearer": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "sesion_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "title": "Sesion Id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/SesionSalida"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/sesiones/{sesion_id}/confirmar": {
-            "post": {
-                "tags": [
-                    "Transformaci\u00f3n"
-                ],
-                "summary": "Confirmar y generar la tabla transformada",
-                "operationId": "confirmar_sesiones__sesion_id__confirmar_post",
-                "security": [
-                    {
-                        "HTTPBearer": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "sesion_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "title": "Sesion Id"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/ConfirmarEntrada"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/TablaSalida"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/sesiones/{sesion_id}/cancelar": {
-            "post": {
-                "tags": [
-                    "Transformaci\u00f3n"
-                ],
-                "summary": "Cancelar sin guardar",
-                "operationId": "cancelar_sesiones__sesion_id__cancelar_post",
-                "security": [
-                    {
-                        "HTTPBearer": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "sesion_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "title": "Sesion Id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Successful Response"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/tablas": {
-            "get": {
-                "tags": [
-                    "Tablas y reportes"
-                ],
-                "summary": "Listar mis tablas transformadas",
-                "operationId": "listar_tablas_get",
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "items": {
-                                        "$ref": "#/components/schemas/TablaSalida"
-                                    },
-                                    "type": "array",
-                                    "title": "Response Listar Tablas Get"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "HTTPBearer": []
-                    }
-                ]
-            }
-        },
-        "/tablas/{tabla_id}/excel": {
-            "get": {
-                "tags": [
-                    "Tablas y reportes"
-                ],
-                "summary": "Exportar una tabla a Excel",
-                "operationId": "exportar_tablas__tabla_id__excel_get",
-                "security": [
-                    {
-                        "HTTPBearer": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "tabla_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "title": "Tabla Id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/tablas/{tabla_id}": {
-            "delete": {
-                "tags": [
-                    "Tablas y reportes"
-                ],
-                "summary": "Eliminar una tabla",
-                "operationId": "eliminar_tablas__tabla_id__delete",
-                "security": [
-                    {
-                        "HTTPBearer": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "tabla_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "title": "Tabla Id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Successful Response"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/reportes": {
-            "post": {
-                "tags": [
-                    "Tablas y reportes"
-                ],
-                "summary": "Generar un reporte con indicadores",
-                "operationId": "generar_reportes_post",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/ReporteEntrada"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "201": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ReporteSalida"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "HTTPBearer": []
-                    }
-                ]
-            }
-        },
-        "/salud": {
-            "get": {
-                "tags": [
-                    "Sistema"
-                ],
-                "summary": "Comprobar que la API est\u00e1 en l\u00ednea",
-                "operationId": "salud_salud_get",
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    }
-                }
-            }
+          }
         }
+      }
     },
-    "components": {
-        "schemas": {
-            "ArchivoSalida": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "title": "Id"
-                    },
-                    "nombre_original": {
-                        "type": "string",
-                        "title": "Nombre Original"
-                    },
-                    "formato": {
-                        "type": "string",
-                        "title": "Formato"
-                    },
-                    "cantidad_registros": {
-                        "type": "integer",
-                        "title": "Cantidad Registros"
-                    },
-                    "columnas": {
-                        "items": {
-                            "additionalProperties": true,
-                            "type": "object"
-                        },
-                        "type": "array",
-                        "title": "Columnas"
-                    },
-                    "vista_previa": {
-                        "$ref": "#/components/schemas/VistaPrevia"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "id",
-                    "nombre_original",
-                    "formato",
-                    "cantidad_registros",
-                    "columnas",
-                    "vista_previa"
-                ],
-                "title": "ArchivoSalida"
-            },
-            "Body_cargar_archivos_post": {
-                "properties": {
-                    "archivo": {
-                        "type": "string",
-                        "format": "binary",
-                        "title": "Archivo"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "archivo"
-                ],
-                "title": "Body_cargar_archivos_post"
-            },
-            "ConfirmarEntrada": {
-                "properties": {
-                    "nombre_tabla": {
-                        "type": "string",
-                        "maxLength": 100,
-                        "minLength": 3,
-                        "pattern": "^[A-Za-z0-9_\\-]+$",
-                        "title": "Nombre Tabla",
-                        "examples": [
-                            "ventas_sep_2026_limpia"
-                        ]
-                    },
-                    "columna_fecha": {
-                        "type": "string",
-                        "title": "Columna Fecha"
-                    },
-                    "columna_valor": {
-                        "type": "string",
-                        "title": "Columna Valor"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "nombre_tabla",
-                    "columna_fecha",
-                    "columna_valor"
-                ],
-                "title": "ConfirmarEntrada"
-            },
-            "HTTPValidationError": {
-                "properties": {
-                    "detail": {
-                        "items": {
-                            "$ref": "#/components/schemas/ValidationError"
-                        },
-                        "type": "array",
-                        "title": "Detail"
-                    }
-                },
-                "type": "object",
-                "title": "HTTPValidationError"
-            },
-            "LoginEntrada": {
-                "properties": {
-                    "correo": {
-                        "type": "string",
-                        "format": "email",
-                        "title": "Correo"
-                    },
-                    "clave": {
-                        "type": "string",
-                        "maxLength": 72,
-                        "minLength": 1,
-                        "title": "Clave"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "correo",
-                    "clave"
-                ],
-                "title": "LoginEntrada"
-            },
-            "PasoEntrada": {
-                "properties": {
-                    "tipo": {
-                        "type": "string",
-                        "enum": [
-                            "eliminar_columna",
-                            "renombrar_columna",
-                            "cambiar_tipo",
-                            "formato_fecha",
-                            "quitar_duplicados",
-                            "quitar_caracteres"
-                        ],
-                        "title": "Tipo"
-                    },
-                    "columna": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Columna"
-                    },
-                    "parametros": {
-                        "additionalProperties": true,
-                        "type": "object",
-                        "title": "Parametros",
-                        "examples": [
-                            {
-                                "nuevo": "valor_venta"
-                            }
-                        ]
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "tipo"
-                ],
-                "title": "PasoEntrada"
-            },
-            "RegistroEntrada": {
-                "properties": {
-                    "nombre": {
-                        "type": "string",
-                        "maxLength": 100,
-                        "minLength": 3,
-                        "title": "Nombre",
-                        "examples": [
-                            "Laura G\u00f3mez"
-                        ]
-                    },
-                    "correo": {
-                        "type": "string",
-                        "format": "email",
-                        "title": "Correo",
-                        "examples": [
-                            "laura@comercialandina.co"
-                        ]
-                    },
-                    "clave": {
-                        "type": "string",
-                        "maxLength": 72,
-                        "minLength": 8,
-                        "title": "Clave",
-                        "examples": [
-                            "Ventas2026"
-                        ]
-                    },
-                    "perfil": {
-                        "type": "string",
-                        "enum": [
-                            "analista",
-                            "jefe_comercial"
-                        ],
-                        "title": "Perfil",
-                        "default": "analista"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "nombre",
-                    "correo",
-                    "clave"
-                ],
-                "title": "RegistroEntrada"
-            },
-            "ReporteEntrada": {
-                "properties": {
-                    "tabla_id": {
-                        "type": "integer",
-                        "title": "Tabla Id"
-                    },
-                    "tipo": {
-                        "type": "string",
-                        "enum": [
-                            "tabla_dinamica",
-                            "barras",
-                            "lineas",
-                            "torta"
-                        ],
-                        "title": "Tipo",
-                        "default": "lineas"
-                    },
-                    "fecha_inicio": {
-                        "anyOf": [
-                            {
-                                "type": "string",
-                                "format": "date"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Fecha Inicio"
-                    },
-                    "fecha_fin": {
-                        "anyOf": [
-                            {
-                                "type": "string",
-                                "format": "date"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Fecha Fin"
-                    },
-                    "agrupacion": {
-                        "type": "string",
-                        "enum": [
-                            "dia",
-                            "mes",
-                            "anio"
-                        ],
-                        "title": "Agrupacion",
-                        "default": "mes"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "tabla_id"
-                ],
-                "title": "ReporteEntrada"
-            },
-            "ReporteSalida": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "title": "Id"
-                    },
-                    "tipo": {
-                        "type": "string",
-                        "title": "Tipo"
-                    },
-                    "agrupacion": {
-                        "type": "string",
-                        "title": "Agrupacion"
-                    },
-                    "serie": {
-                        "items": {
-                            "additionalProperties": true,
-                            "type": "object"
-                        },
-                        "type": "array",
-                        "title": "Serie"
-                    },
-                    "indicadores": {
-                        "additionalProperties": true,
-                        "type": "object",
-                        "title": "Indicadores"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "id",
-                    "tipo",
-                    "agrupacion",
-                    "serie",
-                    "indicadores"
-                ],
-                "title": "ReporteSalida"
-            },
-            "SesionSalida": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "title": "Id"
-                    },
-                    "archivo_id": {
-                        "type": "integer",
-                        "title": "Archivo Id"
-                    },
-                    "estado": {
-                        "type": "string",
-                        "title": "Estado"
-                    },
-                    "pasos": {
-                        "items": {
-                            "additionalProperties": true,
-                            "type": "object"
-                        },
-                        "type": "array",
-                        "title": "Pasos"
-                    },
-                    "vista_previa": {
-                        "$ref": "#/components/schemas/VistaPrevia"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "id",
-                    "archivo_id",
-                    "estado",
-                    "pasos",
-                    "vista_previa"
-                ],
-                "title": "SesionSalida"
-            },
-            "TablaSalida": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "title": "Id"
-                    },
-                    "nombre": {
-                        "type": "string",
-                        "title": "Nombre"
-                    },
-                    "filas": {
-                        "type": "integer",
-                        "title": "Filas"
-                    },
-                    "columnas": {
-                        "type": "integer",
-                        "title": "Columnas"
-                    },
-                    "filas_omitidas": {
-                        "type": "integer",
-                        "title": "Filas Omitidas",
-                        "default": 0
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "id",
-                    "nombre",
-                    "filas",
-                    "columnas"
-                ],
-                "title": "TablaSalida"
-            },
-            "TokenSalida": {
-                "properties": {
-                    "mensaje": {
-                        "type": "string",
-                        "title": "Mensaje"
-                    },
-                    "access_token": {
-                        "type": "string",
-                        "title": "Access Token"
-                    },
-                    "token_type": {
-                        "type": "string",
-                        "title": "Token Type",
-                        "default": "bearer"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "mensaje",
-                    "access_token"
-                ],
-                "title": "TokenSalida"
-            },
-            "UsuarioSalida": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "title": "Id"
-                    },
-                    "nombre": {
-                        "type": "string",
-                        "title": "Nombre"
-                    },
-                    "correo": {
-                        "type": "string",
-                        "title": "Correo"
-                    },
-                    "perfil": {
-                        "type": "string",
-                        "title": "Perfil"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "id",
-                    "nombre",
-                    "correo",
-                    "perfil"
-                ],
-                "title": "UsuarioSalida"
-            },
-            "ValidationError": {
-                "properties": {
-                    "loc": {
-                        "items": {
-                            "anyOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
-                            ]
-                        },
-                        "type": "array",
-                        "title": "Location"
-                    },
-                    "msg": {
-                        "type": "string",
-                        "title": "Message"
-                    },
-                    "type": {
-                        "type": "string",
-                        "title": "Error Type"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "loc",
-                    "msg",
-                    "type"
-                ],
-                "title": "ValidationError"
-            },
-            "VistaPrevia": {
-                "properties": {
-                    "columnas": {
-                        "items": {
-                            "type": "string"
-                        },
-                        "type": "array",
-                        "title": "Columnas"
-                    },
-                    "filas": {
-                        "items": {
-                            "items": {},
-                            "type": "array"
-                        },
-                        "type": "array",
-                        "title": "Filas"
-                    },
-                    "total_filas": {
-                        "type": "integer",
-                        "title": "Total Filas"
-                    },
-                    "aviso": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Aviso"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "columnas",
-                    "filas",
-                    "total_filas"
-                ],
-                "title": "VistaPrevia"
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Autenticación"
+        ],
+        "summary": "Iniciar sesión y obtener un token",
+        "operationId": "login_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginEntrada"
+              }
             }
+          },
+          "required": true
         },
-        "securitySchemes": {
-            "HTTPBearer": {
-                "type": "http",
-                "scheme": "bearer"
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenSalida"
+                }
+              }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
         }
+      }
+    },
+    "/auth/yo": {
+      "get": {
+        "tags": [
+          "Autenticación"
+        ],
+        "summary": "Datos del usuario autenticado",
+        "operationId": "yo_auth_yo_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsuarioSalida"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/archivos": {
+      "get": {
+        "tags": [
+          "Archivos"
+        ],
+        "summary": "Listar mis archivos",
+        "operationId": "listar_archivos_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Archivos"
+        ],
+        "summary": "Cargar un archivo .xlsx o .csv",
+        "operationId": "cargar_archivos_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_cargar_archivos_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivoSalida"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/archivos/{archivo_id}": {
+      "get": {
+        "tags": [
+          "Archivos"
+        ],
+        "summary": "Ver un archivo y su vista previa original",
+        "operationId": "ver_archivos__archivo_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "archivo_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Archivo Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivoSalida"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sesiones": {
+      "post": {
+        "tags": [
+          "Transformación"
+        ],
+        "summary": "Iniciar una sesión de transformación",
+        "operationId": "crear_sesiones_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "archivo_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Archivo Id"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SesionSalida"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sesiones/{sesion_id}": {
+      "get": {
+        "tags": [
+          "Transformación"
+        ],
+        "summary": "Ver la sesión con la vista previa actual",
+        "operationId": "ver_sesiones__sesion_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sesion_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Sesion Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SesionSalida"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sesiones/{sesion_id}/pasos": {
+      "post": {
+        "tags": [
+          "Transformación"
+        ],
+        "summary": "Aplicar una transformación",
+        "operationId": "aplicar_sesiones__sesion_id__pasos_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sesion_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Sesion Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasoEntrada"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SesionSalida"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sesiones/{sesion_id}/pasos/ultimo": {
+      "delete": {
+        "tags": [
+          "Transformación"
+        ],
+        "summary": "Deshacer el último paso",
+        "operationId": "deshacer_sesiones__sesion_id__pasos_ultimo_delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sesion_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Sesion Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SesionSalida"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sesiones/{sesion_id}/confirmar": {
+      "post": {
+        "tags": [
+          "Transformación"
+        ],
+        "summary": "Confirmar y generar la tabla transformada",
+        "operationId": "confirmar_sesiones__sesion_id__confirmar_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sesion_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Sesion Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmarEntrada"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TablaSalida"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sesiones/{sesion_id}/cancelar": {
+      "post": {
+        "tags": [
+          "Transformación"
+        ],
+        "summary": "Cancelar sin guardar",
+        "operationId": "cancelar_sesiones__sesion_id__cancelar_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sesion_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Sesion Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tablas": {
+      "get": {
+        "tags": [
+          "Tablas y reportes"
+        ],
+        "summary": "Listar mis tablas transformadas",
+        "operationId": "listar_tablas_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TablaSalida"
+                  },
+                  "type": "array",
+                  "title": "Response Listar Tablas Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/tablas/{tabla_id}/excel": {
+      "get": {
+        "tags": [
+          "Tablas y reportes"
+        ],
+        "summary": "Exportar una tabla a Excel",
+        "operationId": "exportar_tablas__tabla_id__excel_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tabla_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Tabla Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tablas/{tabla_id}": {
+      "delete": {
+        "tags": [
+          "Tablas y reportes"
+        ],
+        "summary": "Eliminar una tabla",
+        "operationId": "eliminar_tablas__tabla_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tabla_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Tabla Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reportes": {
+      "post": {
+        "tags": [
+          "Tablas y reportes"
+        ],
+        "summary": "Generar un reporte con indicadores",
+        "operationId": "generar_reportes_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReporteEntrada"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReporteSalida"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/admin/resumen": {
+      "get": {
+        "tags": [
+          "Administración"
+        ],
+        "summary": "Cifras generales del sistema",
+        "operationId": "resumen_admin_resumen_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResumenAdminSalida"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/admin/usuarios": {
+      "get": {
+        "tags": [
+          "Administración"
+        ],
+        "summary": "Listar todos los usuarios",
+        "operationId": "usuarios_admin_usuarios_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/UsuarioAdminSalida"
+                  },
+                  "type": "array",
+                  "title": "Response Usuarios Admin Usuarios Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/admin/usuarios/{usuario_id}": {
+      "patch": {
+        "tags": [
+          "Administración"
+        ],
+        "summary": "Cambiar el perfil o activar/desactivar",
+        "operationId": "actualizar_admin_usuarios__usuario_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "usuario_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Usuario Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuarioAdminCambio"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsuarioAdminSalida"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/tablas": {
+      "get": {
+        "tags": [
+          "Administración"
+        ],
+        "summary": "Listar las tablas de todos los usuarios",
+        "operationId": "tablas_admin_tablas_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TablaGlobalSalida"
+                  },
+                  "type": "array",
+                  "title": "Response Tablas Admin Tablas Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/admin/auditoria": {
+      "get": {
+        "tags": [
+          "Administración"
+        ],
+        "summary": "Últimos eventos de la bitácora",
+        "operationId": "auditoria_admin_auditoria_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limite",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limite"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EventoAuditoriaSalida"
+                  },
+                  "title": "Response Auditoria Admin Auditoria Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/salud": {
+      "get": {
+        "tags": [
+          "Sistema"
+        ],
+        "summary": "Comprobar que la API está en línea",
+        "operationId": "salud_salud_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
     }
+  },
+  "components": {
+    "schemas": {
+      "ArchivoSalida": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "nombre_original": {
+            "type": "string",
+            "title": "Nombre Original"
+          },
+          "formato": {
+            "type": "string",
+            "title": "Formato"
+          },
+          "cantidad_registros": {
+            "type": "integer",
+            "title": "Cantidad Registros"
+          },
+          "columnas": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Columnas"
+          },
+          "vista_previa": {
+            "$ref": "#/components/schemas/VistaPrevia"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre_original",
+          "formato",
+          "cantidad_registros",
+          "columnas",
+          "vista_previa"
+        ],
+        "title": "ArchivoSalida"
+      },
+      "Body_cargar_archivos_post": {
+        "properties": {
+          "archivo": {
+            "type": "string",
+            "format": "binary",
+            "title": "Archivo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "archivo"
+        ],
+        "title": "Body_cargar_archivos_post"
+      },
+      "ConfirmarEntrada": {
+        "properties": {
+          "nombre_tabla": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 3,
+            "pattern": "^[A-Za-z0-9_\\-]+$",
+            "title": "Nombre Tabla",
+            "examples": [
+              "ventas_sep_2026_limpia"
+            ]
+          },
+          "columna_fecha": {
+            "type": "string",
+            "title": "Columna Fecha"
+          },
+          "columna_valor": {
+            "type": "string",
+            "title": "Columna Valor"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nombre_tabla",
+          "columna_fecha",
+          "columna_valor"
+        ],
+        "title": "ConfirmarEntrada"
+      },
+      "EventoAuditoriaSalida": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Fecha"
+          },
+          "accion": {
+            "type": "string",
+            "title": "Accion"
+          },
+          "correo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correo"
+          },
+          "detalle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detalle"
+          },
+          "ip": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ip"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "fecha",
+          "accion"
+        ],
+        "title": "EventoAuditoriaSalida"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "LoginEntrada": {
+        "properties": {
+          "correo": {
+            "type": "string",
+            "format": "email",
+            "title": "Correo"
+          },
+          "clave": {
+            "type": "string",
+            "maxLength": 72,
+            "minLength": 1,
+            "title": "Clave"
+          }
+        },
+        "type": "object",
+        "required": [
+          "correo",
+          "clave"
+        ],
+        "title": "LoginEntrada"
+      },
+      "PasoEntrada": {
+        "properties": {
+          "tipo": {
+            "type": "string",
+            "enum": [
+              "eliminar_columna",
+              "renombrar_columna",
+              "cambiar_tipo",
+              "formato_fecha",
+              "quitar_duplicados",
+              "quitar_caracteres"
+            ],
+            "title": "Tipo"
+          },
+          "columna": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Columna"
+          },
+          "parametros": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Parametros",
+            "examples": [
+              {
+                "nuevo": "valor_venta"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "tipo"
+        ],
+        "title": "PasoEntrada"
+      },
+      "RegistroEntrada": {
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 3,
+            "title": "Nombre",
+            "examples": [
+              "Laura Gómez"
+            ]
+          },
+          "correo": {
+            "type": "string",
+            "format": "email",
+            "title": "Correo",
+            "examples": [
+              "laura@comercialandina.co"
+            ]
+          },
+          "clave": {
+            "type": "string",
+            "maxLength": 72,
+            "minLength": 8,
+            "title": "Clave",
+            "examples": [
+              "Ventas2026"
+            ]
+          },
+          "perfil": {
+            "type": "string",
+            "enum": [
+              "analista",
+              "jefe_comercial"
+            ],
+            "title": "Perfil",
+            "default": "analista"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nombre",
+          "correo",
+          "clave"
+        ],
+        "title": "RegistroEntrada"
+      },
+      "ReporteEntrada": {
+        "properties": {
+          "tabla_id": {
+            "type": "integer",
+            "title": "Tabla Id"
+          },
+          "tipo": {
+            "type": "string",
+            "enum": [
+              "tabla_dinamica",
+              "barras",
+              "lineas",
+              "torta"
+            ],
+            "title": "Tipo",
+            "default": "lineas"
+          },
+          "fecha_inicio": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Inicio"
+          },
+          "fecha_fin": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Fin"
+          },
+          "agrupacion": {
+            "type": "string",
+            "enum": [
+              "dia",
+              "mes",
+              "anio"
+            ],
+            "title": "Agrupacion",
+            "default": "mes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tabla_id"
+        ],
+        "title": "ReporteEntrada"
+      },
+      "ReporteSalida": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "tipo": {
+            "type": "string",
+            "title": "Tipo"
+          },
+          "agrupacion": {
+            "type": "string",
+            "title": "Agrupacion"
+          },
+          "serie": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Serie"
+          },
+          "indicadores": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Indicadores"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "tipo",
+          "agrupacion",
+          "serie",
+          "indicadores"
+        ],
+        "title": "ReporteSalida"
+      },
+      "ResumenAdminSalida": {
+        "properties": {
+          "usuarios": {
+            "type": "integer",
+            "title": "Usuarios"
+          },
+          "usuarios_activos": {
+            "type": "integer",
+            "title": "Usuarios Activos"
+          },
+          "administradores": {
+            "type": "integer",
+            "title": "Administradores"
+          },
+          "archivos": {
+            "type": "integer",
+            "title": "Archivos"
+          },
+          "tablas": {
+            "type": "integer",
+            "title": "Tablas"
+          },
+          "registros": {
+            "type": "integer",
+            "title": "Registros"
+          }
+        },
+        "type": "object",
+        "required": [
+          "usuarios",
+          "usuarios_activos",
+          "administradores",
+          "archivos",
+          "tablas",
+          "registros"
+        ],
+        "title": "ResumenAdminSalida"
+      },
+      "SesionSalida": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "archivo_id": {
+            "type": "integer",
+            "title": "Archivo Id"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado"
+          },
+          "pasos": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Pasos"
+          },
+          "vista_previa": {
+            "$ref": "#/components/schemas/VistaPrevia"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "archivo_id",
+          "estado",
+          "pasos",
+          "vista_previa"
+        ],
+        "title": "SesionSalida"
+      },
+      "TablaGlobalSalida": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "filas": {
+            "type": "integer",
+            "title": "Filas"
+          },
+          "columnas": {
+            "type": "integer",
+            "title": "Columnas"
+          },
+          "creada_en": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Creada En"
+          },
+          "usuario_id": {
+            "type": "integer",
+            "title": "Usuario Id"
+          },
+          "propietario": {
+            "type": "string",
+            "title": "Propietario"
+          },
+          "correo_propietario": {
+            "type": "string",
+            "title": "Correo Propietario"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre",
+          "filas",
+          "columnas",
+          "creada_en",
+          "usuario_id",
+          "propietario",
+          "correo_propietario"
+        ],
+        "title": "TablaGlobalSalida"
+      },
+      "TablaSalida": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "filas": {
+            "type": "integer",
+            "title": "Filas"
+          },
+          "columnas": {
+            "type": "integer",
+            "title": "Columnas"
+          },
+          "filas_omitidas": {
+            "type": "integer",
+            "title": "Filas Omitidas",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre",
+          "filas",
+          "columnas"
+        ],
+        "title": "TablaSalida"
+      },
+      "TokenSalida": {
+        "properties": {
+          "mensaje": {
+            "type": "string",
+            "title": "Mensaje"
+          },
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "mensaje",
+          "access_token"
+        ],
+        "title": "TokenSalida"
+      },
+      "UsuarioAdminCambio": {
+        "properties": {
+          "perfil": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "analista",
+                  "jefe_comercial",
+                  "administrador"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Perfil"
+          },
+          "activo": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activo"
+          }
+        },
+        "type": "object",
+        "title": "UsuarioAdminCambio"
+      },
+      "UsuarioAdminSalida": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "correo": {
+            "type": "string",
+            "title": "Correo"
+          },
+          "perfil": {
+            "type": "string",
+            "title": "Perfil"
+          },
+          "activo": {
+            "type": "boolean",
+            "title": "Activo"
+          },
+          "creado_en": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Creado En"
+          },
+          "ultimo_acceso": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ultimo Acceso"
+          },
+          "archivos": {
+            "type": "integer",
+            "title": "Archivos"
+          },
+          "tablas": {
+            "type": "integer",
+            "title": "Tablas"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre",
+          "correo",
+          "perfil",
+          "activo",
+          "creado_en",
+          "archivos",
+          "tablas"
+        ],
+        "title": "UsuarioAdminSalida"
+      },
+      "UsuarioSalida": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "correo": {
+            "type": "string",
+            "title": "Correo"
+          },
+          "perfil": {
+            "type": "string",
+            "title": "Perfil"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre",
+          "correo",
+          "perfil"
+        ],
+        "title": "UsuarioSalida"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "VistaPrevia": {
+        "properties": {
+          "columnas": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Columnas"
+          },
+          "filas": {
+            "items": {
+              "items": {},
+              "type": "array"
+            },
+            "type": "array",
+            "title": "Filas"
+          },
+          "total_filas": {
+            "type": "integer",
+            "title": "Total Filas"
+          },
+          "aviso": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Aviso"
+          }
+        },
+        "type": "object",
+        "required": [
+          "columnas",
+          "filas",
+          "total_filas"
+        ],
+        "title": "VistaPrevia"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
 }

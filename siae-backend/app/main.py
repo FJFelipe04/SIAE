@@ -7,7 +7,7 @@ Documentación interactiva: http://127.0.0.1:8000/docs
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import archivos, auth, sesiones, tablas
+from app.api import administracion, archivos, auth, sesiones, tablas
 
 app = FastAPI(
     title="SIAE API",
@@ -20,7 +20,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-for modulo in (auth, archivos, sesiones, tablas):
+for modulo in (auth, archivos, sesiones, tablas, administracion):
     app.include_router(modulo.ruta)
 
 

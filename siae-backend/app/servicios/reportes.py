@@ -10,12 +10,15 @@ from sqlalchemy.orm import Session
 
 from app.esquemas import ReporteEntrada
 from app.modelos import Indicador, RegistroVenta, Reporte, TablaTransformada, Usuario
+from app.seguridad import es_administrador
+from app.servicios import auditoria
 
 
 def tabla_de(bd: Session, usuario: Usuario, tabla_id: int) -> TablaTransformada:
-    tabla = bd.scalar(
-        select(TablaTransformada).where(TablaTransformada.id == tabla_id, TablaTransformada.usuario_id == usuario.id)
-    )
+    consulta = select(TablaTransformada).where(TablaTransformada.id == tabla_id)
+    if not es_administrador(usuario):  # el administrador tiene acceso global
+        consulta = consulta.where(TablaTransformada.usuario_id == usuario.id)
+    tabla = bd.scalar(consulta)
     if tabla is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Tabla no encontrada.")
     return tabla
@@ -33,8 +36,11 @@ def listar(bd: Session, usuario: Usuario) -> list:
 
 def eliminar(bd: Session, usuario: Usuario, tabla_id: int) -> None:
     tabla = tabla_de(bd, usuario, tabla_id)
+    if tabla.usuario_id != usuario.id:  # solo pasa cuando lo hace el administrador
+        auditoria.registrar(bd, "admin_elimina_tabla", usuario.id, f"tabla {tabla.id}: {tabla.nombre}")
     for rep in bd.scalars(select(Reporte).where(Reporte.tabla_id == tabla.id)):
         bd.delete(rep)
+    bd.flush()  # los reportes (e indicadores) se borran antes que la tabla por la llave foránea (D-09)
     bd.delete(tabla)
     bd.commit()
 

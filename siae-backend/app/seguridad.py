@@ -46,3 +46,14 @@ def usuario_actual(
     if usuario is None or not usuario.activo:
         raise no_autorizado
     return usuario
+
+
+def es_administrador(usuario: Usuario) -> bool:
+    return usuario.perfil == "administrador"
+
+
+def solo_administrador(usuario: Usuario = Depends(usuario_actual)) -> Usuario:
+    """Dependencia para las rutas de administración: exige el perfil administrador."""
+    if not es_administrador(usuario):
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Esta opción es solo para el administrador.")
+    return usuario

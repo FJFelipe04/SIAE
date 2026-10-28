@@ -58,10 +58,12 @@ def iniciar_sesion(bd: Session, correo: str, clave: str, ip: str = None) -> str:
             status.HTTP_429_TOO_MANY_REQUESTS, "Demasiados intentos fallidos. Intente de nuevo en 15 minutos."
         )
     usuario = bd.scalar(select(Usuario).where(Usuario.correo == correo))
-    if usuario is None or not usuario.activo or not verificar_clave(clave, usuario.contrasena_hash):
+    if usuario is None or not verificar_clave(clave, usuario.contrasena_hash):
         auditoria.registrar(bd, "login_fallido", detalle=correo, ip=ip)
         bd.commit()
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Correo o contraseña incorrectos.")
+    if not usuario.activo:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Su cuenta está desactivada. Comuníquese con el administrador.")
     usuario.ultimo_acceso = datetime.now()
     auditoria.registrar(bd, "login_ok", usuario.id, ip=ip)
     bd.commit()

@@ -190,6 +190,15 @@ def test_exportar_y_eliminar_tabla(cliente, token, archivo_id):
     assert cliente.get("/tablas", headers=token).json() == []
 
 
+def test_eliminar_tabla_que_tiene_reportes(cliente, token, archivo_id):
+    """Regresión D-09: borrar una tabla con reportes generados fallaba por la llave foránea."""
+    _, r = _confirmar(cliente, token, archivo_id)
+    tid = r.json()["id"]
+    cliente.post("/reportes", headers=token, json={"tabla_id": tid, "tipo": "barras", "agrupacion": "mes"})
+    assert cliente.delete(f"/tablas/{tid}", headers=token).status_code == 204
+    assert cliente.get("/tablas", headers=token).json() == []
+
+
 def test_confirmar_guarda_columnas_extra_como_texto(cliente, token, archivo_id):
     import io
     import openpyxl
