@@ -1,13 +1,17 @@
 """Sesiones de transformación: aplicar, deshacer, confirmar y cancelar (HU-03 y HU-04)."""
+import csv
+import io
+import json
 from datetime import datetime
 
+import pandas as pd
 from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.dominio.transformaciones import ErrorTransformacion, a_numero, aplicar_pasos, normalizar_fecha
 from app.esquemas import ConfirmarEntrada, PasoEntrada
-from app.modelos import ColumnaArchivo, MapeoCampos, PasoTransformacion, RegistroVenta, SesionTransformacion, TablaTransformada, Usuario
+from app.modelos import ColumnaArchivo, MapeoCampos, PasoTransformacion, SesionTransformacion, TablaTransformada, Usuario
 from app.servicios import archivos, auditoria
 
 
@@ -87,15 +91,22 @@ def confirmar(bd: Session, usuario: Usuario, sesion_id: int, datos: ConfirmarEnt
     bd.add(tabla)
     bd.flush()
     otras = [c for c in df.columns if c not in (datos.columna_fecha, datos.columna_valor)]
-    registros, omitidas = [], 0
-    for fila in df.to_dict("records"):
-        fecha, valor = normalizar_fecha(fila[datos.columna_fecha]), a_numero(fila[datos.columna_valor])
-        if fecha is None or valor is None:
-            omitidas += 1  # filas sin fecha o valor válido no se pueden analizar
-            continue
-        registros.append(RegistroVenta(tabla_id=tabla.id, fecha=datetime.strptime(fecha, "%Y-%m-%d").date(), valor=round(valor, 2),
-                                       datos={c: (None if fila[c] is None else str(fila[c])) for c in otras}))
-    bd.add_all(registros)
+    fechas = df[datos.columna_fecha].map(normalizar_fecha)
+    valores = df[datos.columna_valor].map(a_numero)
+    validas = fechas.notna() & valores.notna()  # filas sin fecha o valor válido no se pueden analizar
+    omitidas = int((~validas).sum())
+    extras = [{c: (None if pd.isna(v) else str(v)) for c, v in zip(otras, fila)}
+              for fila in df.loc[validas, otras].itertuples(index=False, name=None)]
+    # Carga masiva con COPY de PostgreSQL dentro de la misma transacción.
+    # Antes se creaba un objeto ORM por fila y 500.000 filas tardaban 34,7 s (defecto DEF-01).
+    buffer = io.StringIO()
+    escritor = csv.writer(buffer)
+    for f, v, e in zip(fechas[validas], valores[validas], extras):
+        escritor.writerow([tabla.id, f, round(v, 2), json.dumps(e, ensure_ascii=False)])
+    buffer.seek(0)
+    cursor = bd.connection().connection.cursor()
+    cursor.copy_expert("COPY registro_venta (tabla_id, fecha, valor, datos) FROM STDIN WITH (FORMAT csv)", buffer)
+    registros = range(int(validas.sum()))
     tabla.filas = len(registros)
     sesion.estado, sesion.cerrada_en = "confirmada", datetime.now()
     auditoria.registrar(bd, "confirmacion", usuario.id, f"tabla {tabla.id}: {tabla.nombre}")

@@ -147,3 +147,14 @@ def test_exportar_y_eliminar_tabla(cliente, token, archivo_id):
     assert excel.status_code == 200 and excel.content[:2] == b"PK"  # los .xlsx son archivos ZIP
     assert cliente.delete(f"/tablas/{tid}", headers=token).status_code == 204
     assert cliente.get("/tablas", headers=token).json() == []
+
+
+def test_confirmar_guarda_columnas_extra_como_texto(cliente, token, archivo_id):
+    import io
+    import openpyxl
+    _, r = _confirmar(cliente, token, archivo_id)
+    libro = openpyxl.load_workbook(io.BytesIO(cliente.get(f"/tablas/{r.json()['id']}/excel", headers=token).content))
+    filas = list(libro.active.values)
+    encabezados = filas[0]
+    assert "Cliente" in encabezados and "None" not in [str(v) for fila in filas[1:] for v in fila if v is not None]
+    assert filas[1][encabezados.index("Cliente")] == "Cliente A"
