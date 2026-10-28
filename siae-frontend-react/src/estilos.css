@@ -1,0 +1,12 @@
+/* Paleta SIAE: azul #1F5F99 · verde #7CB342 · gris #263238 */
+:root { --siae-azul: #1f5f99; --siae-verde: #7cb342; --siae-gris: #263238; }
+body { background: #f5f7fa; color: var(--siae-gris); }
+.navbar-siae { background: var(--siae-azul); }
+.btn-siae { background: var(--siae-azul); color: #fff; }
+.btn-siae:hover, .btn-siae:focus { background: #174a78; color: #fff; }
+.btn-ok { background: var(--siae-verde); color: #fff; }
+.card { border: 0; box-shadow: 0 1px 4px rgba(0, 0, 0, .08); }
+.zona-carga { border: 2px dashed var(--siae-azul); border-radius: 10px; background: #fff; padding: 2rem; text-align: center; }
+.paso { display: inline-block; background: #e8f0f8; border: 1px solid var(--siae-azul); border-radius: 20px; padding: 2px 12px; margin: 2px; font-size: .85rem; }
+.kpi { font-size: 1.6rem; font-weight: 700; color: var(--siae-azul); }
+.vista { font-size: .85rem; }
