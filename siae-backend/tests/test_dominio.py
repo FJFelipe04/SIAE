@@ -20,6 +20,9 @@ from app.dominio.transformaciones import (
         ("2026-09-10", "2026-09-10"),
         ("31/02/2026", None),
         ("sin fecha", None),
+        ("2026-01-04 00:00:00", "2026-01-04"),  # celda de fecha de Excel (D-10)
+        ("2026-01-04T08:30", "2026-01-04"),
+        ("2026-02-31 00:00:00", None),
         ("", None),
     ],
 )

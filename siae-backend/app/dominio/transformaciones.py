@@ -17,13 +17,16 @@ class ErrorTransformacion(ValueError):
 
 
 def normalizar_fecha(valor) -> str | None:
-    """Convierte dd/mm/aaaa, dd-mm-aaaa o aaaa-mm-dd a aaaa-mm-dd. Devuelve None si no es fecha."""
+    """Convierte dd/mm/aaaa, dd-mm-aaaa o aaaa-mm-dd a aaaa-mm-dd. Devuelve None si no es fecha.
+
+    También acepta la hora que trae una celda de fecha de Excel ("2026-01-04 00:00:00"), que se descarta (D-10).
+    """
     texto = str(valor).strip()
     m = re.fullmatch(r"(\d{1,2})[/-](\d{1,2})[/-](\d{4})", texto)
     if m:
         dia, mes, anio = m.groups()
     else:
-        m = re.fullmatch(r"(\d{4})-(\d{1,2})-(\d{1,2})", texto)
+        m = re.fullmatch(r"(\d{4})-(\d{1,2})-(\d{1,2})(?:[ T]\d{1,2}:\d{2}(?::\d{2}(?:\.\d+)?)?)?", texto)
         if not m:
             return None
         anio, mes, dia = m.groups()
