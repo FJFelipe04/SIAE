@@ -1,4 +1,5 @@
 """Esquemas Pydantic: validan lo que entra y documentan lo que sale de la API."""
+
 from __future__ import annotations
 
 from datetime import date
@@ -49,7 +50,14 @@ class ArchivoSalida(BaseModel):
 
 
 class PasoEntrada(BaseModel):
-    tipo: Literal["eliminar_columna", "renombrar_columna", "cambiar_tipo", "formato_fecha", "quitar_duplicados", "quitar_caracteres"]
+    tipo: Literal[
+        "eliminar_columna",
+        "renombrar_columna",
+        "cambiar_tipo",
+        "formato_fecha",
+        "quitar_duplicados",
+        "quitar_caracteres",
+    ]
     columna: Optional[str] = None
     parametros: dict = Field(default_factory=dict, examples=[{"nuevo": "valor_venta"}])
 
@@ -63,7 +71,9 @@ class SesionSalida(BaseModel):
 
 
 class ConfirmarEntrada(BaseModel):
-    nombre_tabla: str = Field(min_length=3, max_length=100, pattern=r"^[A-Za-z0-9_\-]+$", examples=["ventas_sep_2026_limpia"])
+    nombre_tabla: str = Field(
+        min_length=3, max_length=100, pattern=r"^[A-Za-z0-9_\-]+$", examples=["ventas_sep_2026_limpia"]
+    )
     columna_fecha: str
     columna_valor: str
 

@@ -1,17 +1,36 @@
 """Pruebas unitarias del dominio (no usan base de datos)."""
+
 import pandas as pd
 import pytest
 
-from app.dominio.transformaciones import ErrorTransformacion, FabricaTransformaciones, a_numero, aplicar_pasos, normalizar_fecha
+from app.dominio.transformaciones import (
+    ErrorTransformacion,
+    FabricaTransformaciones,
+    a_numero,
+    aplicar_pasos,
+    normalizar_fecha,
+)
 
 
-@pytest.mark.parametrize("entrada,esperado", [("01/08/2026", "2026-08-01"), ("2-9-2026", "2026-09-02"), ("2026-09-10", "2026-09-10"),
-                                              ("31/02/2026", None), ("sin fecha", None), ("", None)])
+@pytest.mark.parametrize(
+    "entrada,esperado",
+    [
+        ("01/08/2026", "2026-08-01"),
+        ("2-9-2026", "2026-09-02"),
+        ("2026-09-10", "2026-09-10"),
+        ("31/02/2026", None),
+        ("sin fecha", None),
+        ("", None),
+    ],
+)
 def test_normalizar_fecha(entrada, esperado):
     assert normalizar_fecha(entrada) == esperado
 
 
-@pytest.mark.parametrize("entrada,esperado", [("120.000", 120000), ("$ 210.500", 210500), ("1.250.000,50", 1250000.5), ("15", 15), ("abc", None), ("", None)])
+@pytest.mark.parametrize(
+    "entrada,esperado",
+    [("120.000", 120000), ("$ 210.500", 210500), ("1.250.000,50", 1250000.5), ("15", 15), ("abc", None), ("", None)],
+)
 def test_a_numero(entrada, esperado):
     assert a_numero(entrada) == esperado
 

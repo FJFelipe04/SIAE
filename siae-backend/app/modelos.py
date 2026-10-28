@@ -1,16 +1,37 @@
 """Modelos ORM. Corresponden 1 a 1 con sql/siae_postgresql.sql."""
+
 from datetime import date, datetime
 from decimal import Decimal
 from typing import Optional
 
-from sqlalchemy import (BigInteger, Boolean, CheckConstraint, Date, DateTime, ForeignKey, Integer, Numeric,
-                        SmallInteger, String, Text, UniqueConstraint, func)
+from sqlalchemy import (
+    BigInteger,
+    Boolean,
+    CheckConstraint,
+    Date,
+    DateTime,
+    ForeignKey,
+    Integer,
+    Numeric,
+    SmallInteger,
+    String,
+    Text,
+    UniqueConstraint,
+    func,
+)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
 
-TIPOS_TRANSFORMACION = ("eliminar_columna", "renombrar_columna", "cambiar_tipo", "formato_fecha", "quitar_duplicados", "quitar_caracteres")
+TIPOS_TRANSFORMACION = (
+    "eliminar_columna",
+    "renombrar_columna",
+    "cambiar_tipo",
+    "formato_fecha",
+    "quitar_duplicados",
+    "quitar_caracteres",
+)
 
 
 class Empresa(Base):
@@ -37,8 +58,11 @@ class Usuario(Base):
 
 class ArchivoVentas(Base):
     __tablename__ = "archivo_ventas"
-    __table_args__ = (CheckConstraint("formato IN ('xlsx','csv')"), CheckConstraint("tamano_bytes <= 52428800"),
-                      CheckConstraint("cantidad_registros <= 500000"))
+    __table_args__ = (
+        CheckConstraint("formato IN ('xlsx','csv')"),
+        CheckConstraint("tamano_bytes <= 52428800"),
+        CheckConstraint("cantidad_registros <= 500000"),
+    )
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     usuario_id: Mapped[int] = mapped_column(ForeignKey("usuario.id"))
     nombre_original: Mapped[str] = mapped_column(String(255))
@@ -48,7 +72,9 @@ class ArchivoVentas(Base):
     ruta_almacenamiento: Mapped[str] = mapped_column(String(500))
     hash_sha256: Mapped[str] = mapped_column(String(64))
     cargado_en: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
-    columnas: Mapped[list["ColumnaArchivo"]] = relationship(order_by="ColumnaArchivo.posicion", cascade="all, delete-orphan")
+    columnas: Mapped[list["ColumnaArchivo"]] = relationship(
+        order_by="ColumnaArchivo.posicion", cascade="all, delete-orphan"
+    )
 
 
 class ColumnaArchivo(Base):
@@ -78,7 +104,9 @@ class SesionTransformacion(Base):
     estado: Mapped[str] = mapped_column(String(12), default="pendiente")
     iniciada_en: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     cerrada_en: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
-    pasos: Mapped[list["PasoTransformacion"]] = relationship(order_by="PasoTransformacion.orden", cascade="all, delete-orphan")
+    pasos: Mapped[list["PasoTransformacion"]] = relationship(
+        order_by="PasoTransformacion.orden", cascade="all, delete-orphan"
+    )
     archivo: Mapped[ArchivoVentas] = relationship()
 
 
@@ -117,9 +145,13 @@ class RegistroVenta(Base):
 
 class Reporte(Base):
     __tablename__ = "reporte"
-    __table_args__ = (CheckConstraint("tipo IN ('tabla_dinamica','barras','lineas','torta')"),
-                      CheckConstraint("agrupacion IN ('dia','mes','anio')"),
-                      CheckConstraint("fecha_fin IS NULL OR fecha_inicio IS NULL OR fecha_fin >= fecha_inicio", name="ck_reporte_rango"))
+    __table_args__ = (
+        CheckConstraint("tipo IN ('tabla_dinamica','barras','lineas','torta')"),
+        CheckConstraint("agrupacion IN ('dia','mes','anio')"),
+        CheckConstraint(
+            "fecha_fin IS NULL OR fecha_inicio IS NULL OR fecha_fin >= fecha_inicio", name="ck_reporte_rango"
+        ),
+    )
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     tabla_id: Mapped[int] = mapped_column(ForeignKey("tabla_transformada.id"))
     usuario_id: Mapped[int] = mapped_column(ForeignKey("usuario.id"))

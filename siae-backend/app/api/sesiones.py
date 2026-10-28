@@ -1,4 +1,5 @@
 """Rutas de sesiones de transformación."""
+
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
@@ -11,7 +12,9 @@ from app.servicios import transformacion as srv
 ruta = APIRouter(prefix="/sesiones", tags=["Transformación"])
 
 
-@ruta.post("", response_model=SesionSalida, status_code=status.HTTP_201_CREATED, summary="Iniciar una sesión de transformación")
+@ruta.post(
+    "", response_model=SesionSalida, status_code=status.HTTP_201_CREATED, summary="Iniciar una sesión de transformación"
+)
 def crear(archivo_id: int, usuario: Usuario = Depends(usuario_actual), bd: Session = Depends(obtener_sesion)):
     sesion = srv.crear(bd, usuario, archivo_id)
     df, aviso = srv.estado_actual(sesion)
@@ -26,7 +29,9 @@ def ver(sesion_id: int, usuario: Usuario = Depends(usuario_actual), bd: Session 
 
 
 @ruta.post("/{sesion_id}/pasos", response_model=SesionSalida, summary="Aplicar una transformación")
-def aplicar(sesion_id: int, paso: PasoEntrada, usuario: Usuario = Depends(usuario_actual), bd: Session = Depends(obtener_sesion)):
+def aplicar(
+    sesion_id: int, paso: PasoEntrada, usuario: Usuario = Depends(usuario_actual), bd: Session = Depends(obtener_sesion)
+):
     sesion, df, aviso = srv.aplicar(bd, usuario, sesion_id, paso)
     return srv.salida(sesion, df, aviso)
 
@@ -37,8 +42,18 @@ def deshacer(sesion_id: int, usuario: Usuario = Depends(usuario_actual), bd: Ses
     return srv.salida(sesion, df, aviso)
 
 
-@ruta.post("/{sesion_id}/confirmar", response_model=TablaSalida, status_code=status.HTTP_201_CREATED, summary="Confirmar y generar la tabla transformada")
-def confirmar(sesion_id: int, datos: ConfirmarEntrada, usuario: Usuario = Depends(usuario_actual), bd: Session = Depends(obtener_sesion)):
+@ruta.post(
+    "/{sesion_id}/confirmar",
+    response_model=TablaSalida,
+    status_code=status.HTTP_201_CREATED,
+    summary="Confirmar y generar la tabla transformada",
+)
+def confirmar(
+    sesion_id: int,
+    datos: ConfirmarEntrada,
+    usuario: Usuario = Depends(usuario_actual),
+    bd: Session = Depends(obtener_sesion),
+):
     return srv.confirmar(bd, usuario, sesion_id, datos)
 
 

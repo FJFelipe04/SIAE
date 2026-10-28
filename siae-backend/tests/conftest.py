@@ -1,4 +1,5 @@
 """Configuración de pruebas: base de datos PostgreSQL de prueba creada desde el script SQL del proyecto."""
+
 import os
 import pathlib
 import tempfile
@@ -8,7 +9,9 @@ import pytest
 
 URL_ADMIN = os.getenv("SIAE_TEST_ADMIN", "postgresql://postgres@127.0.0.1:54329/postgres")
 BD_PRUEBA = "siae_test"
-os.environ["SIAE_DATABASE_URL"] = URL_ADMIN.rsplit("/", 1)[0].replace("postgresql://", "postgresql+psycopg2://") + "/" + BD_PRUEBA
+os.environ["SIAE_DATABASE_URL"] = (
+    URL_ADMIN.rsplit("/", 1)[0].replace("postgresql://", "postgresql+psycopg2://") + "/" + BD_PRUEBA
+)
 os.environ["SIAE_ALMACENAMIENTO"] = tempfile.mkdtemp(prefix="siae_archivos_")
 os.environ["SIAE_EMPRESA_NIT"] = "900123456-7"
 
@@ -35,6 +38,7 @@ def cliente():
     from fastapi.testclient import TestClient
     from app.db import motor
     from app.main import app
+
     motor.dispose()
     with TestClient(app) as c:
         yield c
@@ -42,7 +46,9 @@ def cliente():
 
 @pytest.fixture()
 def token(cliente):
-    cliente.post("/auth/registro", json={"nombre": "Laura Gómez", "correo": "laura@comercialandina.co", "clave": "Ventas2026"})
+    cliente.post(
+        "/auth/registro", json={"nombre": "Laura Gómez", "correo": "laura@comercialandina.co", "clave": "Ventas2026"}
+    )
     r = cliente.post("/auth/login", json={"correo": "laura@comercialandina.co", "clave": "Ventas2026"})
     return {"Authorization": "Bearer " + r.json()["access_token"]}
 

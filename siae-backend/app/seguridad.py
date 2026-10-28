@@ -1,4 +1,5 @@
 """Contraseñas con bcrypt y tokens JWT."""
+
 from datetime import datetime, timedelta, timezone
 
 import bcrypt
@@ -30,8 +31,9 @@ def crear_token(usuario_id: int) -> str:
     return jwt.encode({"sub": str(usuario_id), "exp": expira}, config.secret_key, algorithm="HS256")
 
 
-def usuario_actual(credenciales: HTTPAuthorizationCredentials = Depends(esquema_bearer),
-                   bd: Session = Depends(obtener_sesion)) -> Usuario:
+def usuario_actual(
+    credenciales: HTTPAuthorizationCredentials = Depends(esquema_bearer), bd: Session = Depends(obtener_sesion)
+) -> Usuario:
     """Dependencia que exige un token válido en el encabezado Authorization: Bearer <token>."""
     no_autorizado = HTTPException(status.HTTP_401_UNAUTHORIZED, "Sesión inválida o expirada. Inicie sesión de nuevo.")
     if credenciales is None:

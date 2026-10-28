@@ -1,0 +1,47 @@
+# Integración continua: en cada push o pull request se revisa el estilo, la complejidad,
+# la seguridad y se ejecutan las pruebas con una base PostgreSQL real.
+name: Calidad SIAE
+on: [push, pull_request]
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: siae-backend
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 10
+    env:
+      SIAE_TEST_ADMIN: postgresql://postgres:postgres@localhost:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      - run: pip install -r requirements.txt pytest-cov==5.0.0 flake8==7.1.1 black==24.8.0 radon==6.0.1 bandit==1.7.10
+      - name: Formato (black)
+        run: black --check app tests
+      - name: Estilo (flake8)
+        run: flake8 app tests
+      - name: Complejidad (ninguna función por encima de B)
+        run: radon cc -n C app && test -z "$(radon cc -n C app)"
+      - name: Seguridad (bandit)
+        run: bandit -q -r app
+      - name: Pruebas y cobertura mínima 90 %
+        run: pytest -q --cov=app --cov-fail-under=90
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: siae-frontend-react
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci
+      - run: npm run build

@@ -1,4 +1,5 @@
 """Rutas de autenticación."""
+
 from fastapi import APIRouter, Depends, Request, status
 from sqlalchemy.orm import Session
 
@@ -11,7 +12,9 @@ from app.servicios import autenticacion
 ruta = APIRouter(prefix="/auth", tags=["Autenticación"])
 
 
-@ruta.post("/registro", response_model=UsuarioSalida, status_code=status.HTTP_201_CREATED, summary="Registrar un usuario")
+@ruta.post(
+    "/registro", response_model=UsuarioSalida, status_code=status.HTTP_201_CREATED, summary="Registrar un usuario"
+)
 def registrar(datos: RegistroEntrada, bd: Session = Depends(obtener_sesion)):
     u = autenticacion.registrar(bd, datos)
     return UsuarioSalida(id=u.id, nombre=u.nombre, correo=u.correo, perfil=u.perfil)

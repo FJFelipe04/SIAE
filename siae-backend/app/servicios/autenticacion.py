@@ -1,4 +1,5 @@
 """Registro e inicio de sesión (HU-01)."""
+
 from datetime import datetime, timedelta
 
 from fastapi import HTTPException, status
@@ -26,8 +27,13 @@ def registrar(bd: Session, datos: RegistroEntrada) -> Usuario:
     correo = datos.correo.lower()
     if bd.scalar(select(Usuario).where(Usuario.correo == correo)):
         raise HTTPException(status.HTTP_409_CONFLICT, "Ya existe una cuenta con ese correo.")
-    usuario = Usuario(empresa_id=_empresa(bd).id, nombre=datos.nombre.strip(), correo=correo,
-                      contrasena_hash=generar_hash(datos.clave), perfil=datos.perfil)
+    usuario = Usuario(
+        empresa_id=_empresa(bd).id,
+        nombre=datos.nombre.strip(),
+        correo=correo,
+        contrasena_hash=generar_hash(datos.clave),
+        perfil=datos.perfil,
+    )
     bd.add(usuario)
     bd.flush()
     auditoria.registrar(bd, "registro", usuario.id)
@@ -38,10 +44,19 @@ def registrar(bd: Session, datos: RegistroEntrada) -> Usuario:
 def iniciar_sesion(bd: Session, correo: str, clave: str, ip: str = None) -> str:
     correo = correo.lower()
     hace_15 = datetime.now() - timedelta(minutes=15)
-    fallidos = bd.scalar(select(func.count()).select_from(BitacoraAuditoria).where(
-        BitacoraAuditoria.accion == "login_fallido", BitacoraAuditoria.detalle == correo, BitacoraAuditoria.fecha >= hace_15))
+    fallidos = bd.scalar(
+        select(func.count())
+        .select_from(BitacoraAuditoria)
+        .where(
+            BitacoraAuditoria.accion == "login_fallido",
+            BitacoraAuditoria.detalle == correo,
+            BitacoraAuditoria.fecha >= hace_15,
+        )
+    )
     if fallidos >= config.intentos_maximos:
-        raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, "Demasiados intentos fallidos. Intente de nuevo en 15 minutos.")
+        raise HTTPException(
+            status.HTTP_429_TOO_MANY_REQUESTS, "Demasiados intentos fallidos. Intente de nuevo en 15 minutos."
+        )
     usuario = bd.scalar(select(Usuario).where(Usuario.correo == correo))
     if usuario is None or not usuario.activo or not verificar_clave(clave, usuario.contrasena_hash):
         auditoria.registrar(bd, "login_fallido", detalle=correo, ip=ip)

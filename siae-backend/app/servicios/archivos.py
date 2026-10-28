@@ -1,4 +1,5 @@
 """Carga de archivos de ventas y vista previa (HU-02)."""
+
 import hashlib
 import io
 import os
@@ -50,7 +51,9 @@ def cargar(bd: Session, usuario: Usuario, nombre: str, contenido: bytes) -> tupl
     try:
         df = leer_tabla(contenido, formato)
     except Exception:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "No se pudo leer el archivo. Verifique que no esté dañado.")
+        raise HTTPException(
+            status.HTTP_422_UNPROCESSABLE_ENTITY, "No se pudo leer el archivo. Verifique que no esté dañado."
+        )
     if len(df) > config.max_registros:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "El archivo supera los 500.000 registros.")
     if df.columns.empty:
@@ -60,10 +63,19 @@ def cargar(bd: Session, usuario: Usuario, nombre: str, contenido: bytes) -> tupl
     ruta = os.path.join(carpeta, f"{uuid.uuid4().hex}.{formato}")
     with open(ruta, "wb") as f:  # el original se guarda tal cual y nunca se modifica
         f.write(contenido)
-    archivo = ArchivoVentas(usuario_id=usuario.id, nombre_original=nombre[:255], formato=formato, tamano_bytes=len(contenido),
-                            cantidad_registros=len(df), ruta_almacenamiento=ruta, hash_sha256=hashlib.sha256(contenido).hexdigest())
-    archivo.columnas = [ColumnaArchivo(nombre_original=str(c)[:150], posicion=i + 1, tipo_detectado=detectar_tipo(df[c]))
-                        for i, c in enumerate(df.columns)]
+    archivo = ArchivoVentas(
+        usuario_id=usuario.id,
+        nombre_original=nombre[:255],
+        formato=formato,
+        tamano_bytes=len(contenido),
+        cantidad_registros=len(df),
+        ruta_almacenamiento=ruta,
+        hash_sha256=hashlib.sha256(contenido).hexdigest(),
+    )
+    archivo.columnas = [
+        ColumnaArchivo(nombre_original=str(c)[:150], posicion=i + 1, tipo_detectado=detectar_tipo(df[c]))
+        for i, c in enumerate(df.columns)
+    ]
     bd.add(archivo)
     bd.flush()
     auditoria.registrar(bd, "carga", usuario.id, f"archivo {archivo.id}: {nombre}")
@@ -72,7 +84,9 @@ def cargar(bd: Session, usuario: Usuario, nombre: str, contenido: bytes) -> tupl
 
 
 def obtener(bd: Session, usuario: Usuario, archivo_id: int) -> ArchivoVentas:
-    archivo = bd.scalar(select(ArchivoVentas).where(ArchivoVentas.id == archivo_id, ArchivoVentas.usuario_id == usuario.id))
+    archivo = bd.scalar(
+        select(ArchivoVentas).where(ArchivoVentas.id == archivo_id, ArchivoVentas.usuario_id == usuario.id)
+    )
     if archivo is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Archivo no encontrado.")
     return archivo

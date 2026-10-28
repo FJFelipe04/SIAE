@@ -1,4 +1,5 @@
 """Rutas de tablas transformadas y reportes."""
+
 from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
 
@@ -19,8 +20,11 @@ def listar(usuario: Usuario = Depends(usuario_actual), bd: Session = Depends(obt
 @ruta.get("/tablas/{tabla_id}/excel", summary="Exportar una tabla a Excel")
 def exportar(tabla_id: int, usuario: Usuario = Depends(usuario_actual), bd: Session = Depends(obtener_sesion)):
     nombre, contenido = srv.exportar_excel(bd, usuario, tabla_id)
-    return Response(contenido, media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    headers={"Content-Disposition": f'attachment; filename="{nombre}"'})
+    return Response(
+        contenido,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f'attachment; filename="{nombre}"'},
+    )
 
 
 @ruta.delete("/tablas/{tabla_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Eliminar una tabla")
@@ -28,6 +32,11 @@ def eliminar(tabla_id: int, usuario: Usuario = Depends(usuario_actual), bd: Sess
     srv.eliminar(bd, usuario, tabla_id)
 
 
-@ruta.post("/reportes", response_model=ReporteSalida, status_code=status.HTTP_201_CREATED, summary="Generar un reporte con indicadores")
+@ruta.post(
+    "/reportes",
+    response_model=ReporteSalida,
+    status_code=status.HTTP_201_CREATED,
+    summary="Generar un reporte con indicadores",
+)
 def generar(datos: ReporteEntrada, usuario: Usuario = Depends(usuario_actual), bd: Session = Depends(obtener_sesion)):
     return srv.generar(bd, usuario, datos)

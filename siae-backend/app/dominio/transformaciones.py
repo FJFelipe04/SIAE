@@ -3,6 +3,7 @@
 Cada transformación recibe un DataFrame y devuelve uno nuevo: el original nunca se modifica.
 Deshacer = volver a aplicar todos los pasos menos el último sobre el archivo original.
 """
+
 from __future__ import annotations
 
 import re
@@ -57,8 +58,7 @@ class Transformacion(ABC):
             raise ErrorTransformacion(f"No existe la columna '{self.columna}'.")
 
     @abstractmethod
-    def aplicar(self, df: pd.DataFrame) -> pd.DataFrame:
-        ...
+    def aplicar(self, df: pd.DataFrame) -> pd.DataFrame: ...
 
 
 class EliminarColumna(Transformacion):
@@ -133,7 +133,10 @@ class QuitarCaracteres(Transformacion):
 class FabricaTransformaciones:
     """Factory Method: crea la transformación correcta a partir de su tipo."""
 
-    _registro = {c.tipo: c for c in (EliminarColumna, RenombrarColumna, FormatoFecha, CambiarTipo, QuitarDuplicados, QuitarCaracteres)}
+    _registro = {
+        c.tipo: c
+        for c in (EliminarColumna, RenombrarColumna, FormatoFecha, CambiarTipo, QuitarDuplicados, QuitarCaracteres)
+    }
 
     @classmethod
     def crear(cls, tipo: str, columna: str | None, parametros: dict | None = None) -> Transformacion:
