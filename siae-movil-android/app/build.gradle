@@ -1,0 +1,30 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'co.sena.siae.movil'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "co.sena.siae.movil"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+        // Dirección de la API. 10.0.2.2 es el computador anfitrión visto desde el emulador de Android.
+        buildConfigField "String", "URL_API", '"http://10.0.2.2:8000"'
+    }
+    buildFeatures { buildConfig true }
+    buildTypes {
+        release { minifyEnabled false }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+}

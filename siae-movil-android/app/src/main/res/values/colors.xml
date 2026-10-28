@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="siae_azul">#1F5F99</color>
+    <color name="siae_verde">#7CB342</color>
+    <color name="siae_gris">#263238</color>
+    <color name="fondo">#F5F7FA</color>
+    <color name="error">#B00020</color>
+</resources>

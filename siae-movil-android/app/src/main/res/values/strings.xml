@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SIAE Móvil</string>
+    <string name="subtitulo">Indicadores de ventas en tu celular</string>
+    <string name="correo">Correo electrónico</string>
+    <string name="clave">Contraseña</string>
+    <string name="ingresar">Ingresar</string>
+    <string name="mis_tablas">Mis tablas</string>
+    <string name="sin_tablas">Todavía no tienes tablas. Créalas desde la versión web.</string>
+    <string name="ventas_totales">Ventas totales</string>
+    <string name="promedio">Promedio por mes</string>
+    <string name="crecimiento">Crecimiento último mes</string>
+    <string name="cerrar_sesion">Cerrar sesión</string>
+    <string name="desc_logo">Logo de SIAE</string>
+</resources>
