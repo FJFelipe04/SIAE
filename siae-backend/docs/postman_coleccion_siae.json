@@ -1,0 +1,779 @@
+{
+  "info": {
+    "_postman_id": "6105ec2f-3b62-4ddf-89e5-885422667017",
+    "name": "SIAE API (proyecto AA5-EV03)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base",
+      "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "archivo_id",
+      "value": ""
+    },
+    {
+      "key": "sesion_id",
+      "value": ""
+    },
+    {
+      "key": "tabla_id",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Salud",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base}}/salud",
+          "host": [
+            "{{base}}"
+          ],
+          "path": [
+            "salud"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Código 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Registro",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base}}/auth/registro",
+          "host": [
+            "{{base}}"
+          ],
+          "path": [
+            "auth",
+            "registro"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Carlos Ruiz\",\n  \"correo\": \"carlos@comercialandina.co\",\n  \"clave\": \"Reportes2026\",\n  \"perfil\": \"jefe_comercial\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Código 201', function () { pm.response.to.have.status(201); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Registro inválido",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base}}/auth/registro",
+          "host": [
+            "{{base}}"
+          ],
+          "path": [
+            "auth",
+            "registro"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"C\",\n  \"correo\": \"malo\",\n  \"clave\": \"123\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Código 422', function () { pm.response.to.have.status(422); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Login incorrecto",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base}}/auth/login",
+          "host": [
+            "{{base}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"correo\": \"carlos@comercialandina.co\",\n  \"clave\": \"malaclave\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Código 401', function () { pm.response.to.have.status(401); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base}}/auth/login",
+          "host": [
+            "{{base}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"correo\": \"carlos@comercialandina.co\",\n  \"clave\": \"Reportes2026\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Código 200', function () { pm.response.to.have.status(200); });",
+              "pm.collectionVariables.set('token', pm.response.json().access_token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Sin token",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base}}/tablas",
+          "host": [
+            "{{base}}"
+          ],
+          "path": [
+            "tablas"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Código 401', function () { pm.response.to.have.status(401); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Cargar archivo CSV",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{base}}/archivos",
+          "host": [
+            "{{base}}"
+          ],
+          "path": [
+            "archivos"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "archivo",
+              "type": "file",
+              "src": "ventas_ejemplo.csv"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Código 201', function () { pm.response.to.have.status(201); });",
+              "pm.test('8 registros', function () { pm.expect(pm.response.json().cantidad_registros).to.eql(8); });",
+              "pm.collectionVariables.set('archivo_id', pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 Iniciar sesión de transformación",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{base}}/sesiones?archivo_id={{archivo_id}}",
+          "host": [
+            "{{base}}"
+          ],
+          "path": [
+            "sesiones"
+          ],
+          "query": [
+            {
+              "key": "archivo_id",
+              "value": "{{archivo_id}}"
+            }
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Código 201', function () { pm.response.to.have.status(201); });",
+              "pm.collectionVariables.set('sesion_id', pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Formato de fecha",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base}}/sesiones/{{sesion_id}}/pasos",
+          "host": [
+            "{{base}}"
+          ],
+          "path": [
+            "sesiones",
+            "{{sesion_id}}",
+            "pasos"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipo\": \"formato_fecha\",\n  \"columna\": \"Fecha\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Código 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 Quitar duplicados",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base}}/sesiones/{{sesion_id}}/pasos",
+          "host": [
+            "{{base}}"
+          ],
+          "path": [
+            "sesiones",
+            "{{sesion_id}}",
+            "pasos"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipo\": \"quitar_duplicados\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Código 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('7 filas', function () { pm.expect(pm.response.json().vista_previa.total_filas).to.eql(7); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11 Eliminar columna",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base}}/sesiones/{{sesion_id}}/pasos",
+          "host": [
+            "{{base}}"
+          ],
+          "path": [
+            "sesiones",
+            "{{sesion_id}}",
+            "pasos"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipo\": \"eliminar_columna\",\n  \"columna\": \"Observaciones\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Código 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "12 Deshacer último paso",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base}}/sesiones/{{sesion_id}}/pasos/ultimo",
+          "host": [
+            "{{base}}"
+          ],
+          "path": [
+            "sesiones",
+            "{{sesion_id}}",
+            "pasos",
+            "ultimo"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Código 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('2 pasos', function () { pm.expect(pm.response.json().pasos.length).to.eql(2); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "13 Transformación inválida",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base}}/sesiones/{{sesion_id}}/pasos",
+          "host": [
+            "{{base}}"
+          ],
+          "path": [
+            "sesiones",
+            "{{sesion_id}}",
+            "pasos"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipo\": \"eliminar_columna\",\n  \"columna\": \"NoExiste\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Código 422', function () { pm.response.to.have.status(422); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "14 Confirmar",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base}}/sesiones/{{sesion_id}}/confirmar",
+          "host": [
+            "{{base}}"
+          ],
+          "path": [
+            "sesiones",
+            "{{sesion_id}}",
+            "confirmar"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre_tabla\": \"ventas_postman\",\n  \"columna_fecha\": \"Fecha\",\n  \"columna_valor\": \"Valor\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Código 201', function () { pm.response.to.have.status(201); });",
+              "pm.collectionVariables.set('tabla_id', pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "15 Listar tablas",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base}}/tablas",
+          "host": [
+            "{{base}}"
+          ],
+          "path": [
+            "tablas"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Código 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "16 Reporte mensual",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base}}/reportes",
+          "host": [
+            "{{base}}"
+          ],
+          "path": [
+            "reportes"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tabla_id\": {{tabla_id}},\n  \"tipo\": \"lineas\",\n  \"agrupacion\": \"mes\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Código 201', function () { pm.response.to.have.status(201); });",
+              "pm.test('Total 788500', function () { pm.expect(pm.response.json().indicadores.ventas_totales).to.eql(788500); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "17 Reporte rango invertido",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base}}/reportes",
+          "host": [
+            "{{base}}"
+          ],
+          "path": [
+            "reportes"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tabla_id\": {{tabla_id}},\n  \"fecha_inicio\": \"2026-10-01\",\n  \"fecha_fin\": \"2026-01-01\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Código 422', function () { pm.response.to.have.status(422); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "18 Exportar Excel",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base}}/tablas/{{tabla_id}}/excel",
+          "host": [
+            "{{base}}"
+          ],
+          "path": [
+            "tablas",
+            "{{tabla_id}}",
+            "excel"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Código 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
