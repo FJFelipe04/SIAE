@@ -1,0 +1,32 @@
+# Uso: docker compose up -d --build   |   prueba: http://localhost:8080
+services:
+  db:
+    image: mysql:8.4
+    container_name: siae-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-cambiar_en_produccion}
+      MYSQL_DATABASE: siae
+      MYSQL_USER: siae
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-siae_local}
+    volumes:
+      - datos_mysql:/var/lib/mysql
+      - ../../siae-backend/sql/siae_mysql.sql:/docker-entrypoint-initdb.d/01_siae.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+  web:
+    build: .
+    container_name: siae-apache
+    ports:
+      - "8080:80"
+    environment:
+      DB_HOST: db
+      DB_NAME: siae
+      DB_USER: siae
+      DB_PASSWORD: ${MYSQL_PASSWORD:-siae_local}
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  datos_mysql:
